@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Посты новостей</title>
+    <link rel="stylesheet" href="{% static 'blog/css/style2.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+</head>
+<body>
+    <header>
+        <h1>Новости Нарына</h1>
+        <nav>
+            <a href="/">Главная</a>
+            <a href="#news">Новости</a>
+            <a href="#contacts">Контакты</a>
+            <a href="#about">О нас</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h2>{{ post.title }}</h2>
+        <section id="news" class="section">
+            <div id="news-container">
+                <div class="news-card" onclick="openModal('modal1')">
+                    Видео или изображение
+                    <img src="{{ post.img.url }}" alt="" width="60%">
+                    <p>{{ post.description }}</p>
+                </div>
+                <div class="-container">
+                    <b>Автор:</b> {{ post.author}} <br>
+                    <b>Дата публикации:</b> {{ post.date }} <br>
+                </div>
+            </div>
+        </section>
+        <section id="news" class="section">
+            <div id="news-container">
+                <div class="news-card" onclick="openModal('modal1')">
+                    {% if post.video %}
+                        <video controls>
+                             <source src="{{ post.video.url }}" type="video/mp4" width="300%">
+                        </video>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="container">
+                <div class="form-comment">
+                    <h3>Оставить комментарии</h3>
+                    <div>
+                        <form action="{% url 'add_comments' post.id %}" method="post">
+                            {% csrf_token %}
+                            <div>
+                                <label>Ваш комментарий</label>
+                                <textarea name="text_comment"></textarea>
+                            </div>
+                            <div>
+                                <label>Ваше имя *</label>
+                                <input type="text" name="name">
+                            </div>
+                            <div>
+                                <label>Ваш email:</label>
+                                <input type="email" name="email">
+                            </div>
+                            <div>
+                                 <input type="submit">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div>
+                {% for comment in post.comments_set.all %}
+                    <div class="view-comment">
+                        <h4>{{ comment.name }}</h4>
+                        <p>
+                            {{ comment.text_comment }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Электронная почта: info@newsnaryn.kg</p>
+        <p>Телефон: +996 705525252.</p>
+        <p>&copy; 2024 Новости Нарына</p>
+    </footer>
+
+    <!-- Modal Template -->
+    <div id="news-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Подготовка к строительству "Камбар-Аты 1" завершится в конце года — Минэнерго</h2>
+            <p id="modal-content">Сейчас на месте строят дорогу протяженностью 5,6 километра, тоннель, мост, временный лагерь для рабочих, высоковольтную линию и подстанции."Один из отводных каналов для сворачивания русла реки Нарын уже готов. КАГЭС-1 мощностью 1 860 мегаватт обеспечит энергетическую безопасность страны. Высота плотины составит 256 метров, а объем водохранилища — более 5,4 миллиарда кубометров", — информирует Минэнерго.</p>
+        </div>
+    </div>
+
+    <script>
+        function openModal(title, content) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-content').innerText = content;
+            document.getElementById('news-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('news-modal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+        }
+
+        document.getElementById('news-form').onsubmit = function(event) {
+            event.preventDefault();
+
+            const newsTitle = document.getElementById('news-title').value;
+            const newsDescription = document.getElementById('news-description').value;
+            const newsContent = document.getElementById('news-content').value;
+            const newsImage = document.getElementById('news-image').files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function() {
+                const newsContainer = document.getElementById('news-container');
+                const newsCard = document.createElement('div');
+                newsCard.className = 'news-card';
+                newsCard.onclick = () => openModal(newsTitle, newsContent);
+
+                const newsTitleElement = document.createElement('h3');
+                newsTitleElement.textContent = newsTitle;
+                newsCard.appendChild(newsTitleElement);
+
+                const newsDescriptionElement = document.createElement('p');
+                newsDescriptionElement.textContent = newsDescription;
+                newsCard.appendChild(newsDescriptionElement);
+
+                if (newsImage) {
+                    const newsImageElement = document.createElement('img');
+                    newsImageElement.src = reader.result;
+                    newsCard.appendChild(newsImageElement);
+                }
+
+                newsContainer.appendChild(newsCard);
+
+                document.getElementById('news-form').reset();
+            };
+
+            if (newsImage) {
+                reader.readAsDataURL(newsImage);
+            } else {
+                reader.onloadend();
+            }
+        };
+    </script>
+</body>
+</html>

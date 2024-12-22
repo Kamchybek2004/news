@@ -84,9 +84,23 @@ nav a:hover {
 }
 
 .news-card img {
+    display: block;
     max-width: 100%;
-    border-radius: 8px;
-    margin: 15px 0;
+    border-radius: 3px;
+    margin: 0 auto 20px;
+}
+
+.news-card h3 {
+    font-size: 1.5rem; /* Увеличить размер шрифта */
+    color: #0366d6; /* Яркий цвет, соответствующий дизайну */
+    margin-bottom: 15px; /* Добавить отступ снизу */
+    text-align: center; /* Центрировать текст */
+}
+
+.continue {
+    display: block;
+    margin: 20px;
+    text-align: center;
 }
 
 #contacts, #about {

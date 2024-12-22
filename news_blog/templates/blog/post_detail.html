@@ -23,7 +23,7 @@
         <section id="news" class="section">
             <div id="news-container">
                 <div class="news-card" onclick="openModal('modal1')">
-                    Видео или изображение
+
                     <img src="{{ post.img.url }}" alt="" width="60%">
                     <p>{{ post.description }}</p>
                 </div>
@@ -33,17 +33,19 @@
                 </div>
             </div>
         </section>
-        <section id="news" class="section">
-            <div id="news-container">
-                <div class="news-card" onclick="openModal('modal1')">
-                    {% if post.video %}
-                        <video controls>
-                             <source src="{{ post.video.url }}" type="video/mp4" width="300%">
-                        </video>
-                    {% endif %}
+        {% if post.video %}
+            <section id="news" class="section">
+                <div id="news-container">
+                    <div class="news-card" onclick="openModal('modal1')">
+                            <video controls>
+                                 <source src="{{ post.video.url }}" type="video/mp4" width="300%">
+                            </video>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        {% endif %}
+
+
         <section>
             <div class="container">
                 <div class="form-comment">
@@ -73,14 +75,15 @@
         </section>
         <section>
             <div>
-                {% for comment in post.comments_set.all %}
-                    <div class="view-comment">
-                        <h4>{{ comment.name }}</h4>
-                        <p>
-                            {{ comment.text_comment }}
-                        </p>
-                    </div>
-                {% endfor %}
+                <h3>Комментарии:</h3>
+                    {% for comment in post.comments_set.all %}
+                        <div class="view-comment">
+                            <h4>{{ comment.name }}</h4>
+                            <p>
+                                {{ comment.text_comment }}
+                            </p>
+                        </div>
+                    {% endfor %}
             </div>
         </section>
     </div>
